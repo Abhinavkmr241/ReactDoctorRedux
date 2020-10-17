@@ -3,9 +3,9 @@ import { getDoctorList } from '../../http/http-calls';
 
 export class DoctorList extends Component {
 
-    componentDidMount() {
-        getDoctorList().then(res => console.log(res));
-    }
+    // componentDidMount() {
+    //     getDoctorList().then(res => console.log(res));
+    // }
 
     render() {
         return (
