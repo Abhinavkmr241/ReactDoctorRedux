@@ -1,0 +1,28 @@
+.nav-area {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    min-height: 10vh;
+    background-color: rgb(30, 33, 34);
+    color: white;
+}
+
+.nav-links {
+   width: 40%;
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   list-style: none;
+}
+
+.doctor-list {
+    color: rgb(240, 220, 220);
+}
+
+.add-doctor {
+    color: rgb(240, 220, 220);
+}
+
+.newly-added-doctors {
+    color: rgb(240, 220, 220);
+}

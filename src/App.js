@@ -1,25 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Menu } from './components/Menu/Menu';
+import { Home } from './components/Menu/Home';
+import { DoctorList } from './components/DoctorList/DoctorList';
+import { AddDoctor } from './components/AddDoctor/AddDoctor';
+import { AddDetails } from './components/AddDoctor/AddDetails';
+import { AddTiming } from './components/AddDoctor/AddTiming';
+import { NewDoctorList } from './components/NewDoctorList/NewDoctorList';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Menu />
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/doctor-list" component={DoctorList} />
+          <Route path="/add-doctor" component={AddDoctor} />
+          <Route path="/add-doctor/step1" component={AddDetails} />
+          <Route path="/add-doctor/step2" component={AddTiming} />
+          <Route path="/newly-added-doctors" component={NewDoctorList} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
