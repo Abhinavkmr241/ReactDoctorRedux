@@ -1,0 +1,45 @@
+.todoBody {
+    background-color: rgb(102, 198, 236);
+    min-height: 800px;
+    width: 700px;
+    margin: 40px auto;
+    border-radius: 20px;
+}
+
+.inputText {
+    height: 50px;
+    width: 500px;
+    color: rgb(3, 3, 27);
+    font-size: 18px;
+    padding: 5px 20px;
+    margin: 20px;
+    border-radius: 30px;
+}
+
+.addButton {
+    height: 50px;
+    width: 100px;
+    background-color: rgb(3, 3, 27);
+    font-size: 18px;
+    border-radius: 30px;
+    color: whitesmoke;
+}
+
+.inputText, .addButton:focus {
+    outline: none;
+}
+
+.inputText::placeholder {
+    color: rgb(121, 39, 39);
+}
+
+h1 {
+    font-size: 3rem;
+    color: yellow;
+}
+
+.background {
+    background-color: darkblue;
+    min-height: fit-content;
+    min-width: fit-content;
+}

@@ -1,0 +1,46 @@
+.element {
+    height: 50px;
+    width: 500px;
+    background-color: yellow;
+    color: black;
+    font-size: 20px;
+    margin: 20px auto;
+    border-radius: 40px;
+    align-items: left;
+}
+
+.markElement {
+    height: 50px;
+    width: 500px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    margin: 20px auto;
+    border-radius: 40px;
+    align-items: left;
+}
+
+.inputBox {
+    height: 50px;
+    width: 400px;
+    background-color: transparent;
+    font-size: 20px;
+    border: 0;
+}
+
+.inputBox:focus {
+    outline: none;
+}
+
+.deleteButton {
+    height: 50px;
+    width: 50px;
+    border: 0;
+    background-color: transparent;
+    font-size: 20px;
+    color: red;
+}
+
+.deleteButton:focus {
+    outline: none;
+}

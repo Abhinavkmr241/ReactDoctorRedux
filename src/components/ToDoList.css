@@ -1,0 +1,39 @@
+.functionBox {
+    background-color: transparent;
+    height: 50px;
+    width: 600px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.functionBox div {
+    align-self: stretch;
+    width: 150px;
+    height: 40px;
+    background-color: transparent;
+}
+
+.functionBox button {
+    height: 50px;
+    width: 100px;
+    background-color: rgb(3, 3, 27);
+    font-size: 18px;
+    border-radius: 30px;
+    color: whitesmoke;
+}
+
+.functionBox button:focus {
+    outline: none;
+}
+
+.listBox {
+    height: 500px;
+    width: 600px;
+    background-color: transparent;
+    color: black;
+    font-size: 20px;
+    margin: 40px auto;
+    border-radius: 40px;
+}
