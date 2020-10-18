@@ -4,6 +4,7 @@ export const getDoctorList = () => {
     return new Promise((resolve, reject) => {
         makePostRequest(
             "https://api-dev.askvaidya.in/admin/v1/doctors",
+            true,
             {
                 pageNumber: 1,
                 pageSize: 10,

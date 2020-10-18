@@ -1,37 +1,56 @@
+import { getToken } from "./token-interceptor";
+
 export const makePostRequest = async (
     url,
-    body
-) => {
-    let authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlY2U0MjA0ZmZkOTliMGRkMTNhNDNjMSIsIl9pZCI6IjVlY2U0MjA0ZmZkOTliMGRkMTNhNDNjMSIsImZ1bGxOYW1lIjoiQXNrIFZhaWR5YSIsImVtYWlsIjoiYWRtaW5AYXNrLXZhaWR5YS5jb20iLCJ1c2VyVHlwZSI6IkFkbWluIiwiaXNTdXBlckFkbWluIjp0cnVlLCJpYXQiOjE2MDI1MDMwNTcsImV4cCI6MTYwNTA5NTA1N30.dfpg0kxVmq64BRwrYs769z2MOmT4Jl9of55DSOIInSk';
-    let headers = {};
-    headers["Authorization"] = "Bearer " + authToken;
-    return new Promise((resolve, reject) => {
-        try {
-            fetch(url, {
-                method: "POST",
-                headers: headers,
-                body: body
-            })
-                .then(
-                    res => res.json(),
-                    error => {
-                        reject(error);
-                    }
-                )
-                .then(
-                    jsonResponse => {
-                        resolve(jsonResponse);
-                    },
-                    error => {
-                        reject(error);
-                    }
-                )
-                .catch(error => {
-                    reject(error);
-                });
-        } catch (e) {
-            console.log(e);
-            reject();
+    attachToken = false,
+    params = {}
+  ) => {
+    let headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
+    if (attachToken) {
+      try {
+        const authToken = await getToken();
+        if (authToken) {
+          headers["Authorization"] = "Bearer " + authToken;
         }
+      } catch (e) {
+        console.log("Error fetching auth token: ", e);
+      }
+    }
+    return new Promise((resolve, reject) => {
+      try {
+        fetch(url, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(params)
+        })
+          .then(
+            res => res.json(),
+            error => {
+              reject(error);
+            }
+          )
+          .then(
+            jsonResponse => {
+              if (jsonResponse.error === false) {
+                resolve(jsonResponse);
+              } else {
+                console.log(jsonResponse);
+                reject(jsonResponse);
+              }
+            },
+            error => {
+              reject(error);
+            }
+          )
+          .catch(error => {
+            reject(error);
+          });
+      } catch (e) {
+        console.log(e);
+        reject();
+      }
     });
 };

@@ -1,0 +1,1 @@
+export { formValidateReducer } from './details-validate';

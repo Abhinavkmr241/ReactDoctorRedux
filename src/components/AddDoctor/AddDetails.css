@@ -1,0 +1,17 @@
+.basicForm {
+    height: 850px;
+    width: 900px;
+    margin: 40px auto;
+    border: 1px solid black;
+}
+
+.title {
+    border-bottom: 1px solid black;
+    color: rgb(8, 8, 75);
+}
+
+.formBody {
+    width: 800px;
+    height: 800px;
+    margin: 20px auto;
+}
