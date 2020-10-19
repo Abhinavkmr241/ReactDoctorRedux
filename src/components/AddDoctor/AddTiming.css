@@ -1,4 +1,4 @@
-.basicForm {
+.timingForm {
     height: 1000px;
     width: 900px;
     margin: 40px auto;
@@ -8,10 +8,4 @@
 .title {
     border-bottom: 1px solid black;
     color: rgb(8, 8, 75);
-}
-
-.formBody {
-    width: 800px;
-    height: 800px;
-    margin: 20px auto;
 }

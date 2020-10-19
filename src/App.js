@@ -4,7 +4,7 @@ import { Menu } from './components/Menu/Menu';
 import { Home } from './components/Menu/Home';
 import { DoctorList } from './components/DoctorList/DoctorList';
 import { AddDoctor } from './components/AddDoctor/AddDoctor';
-import AddDetails from './components/AddDoctor/AddDetails';
+import { AddDetails } from './components/AddDoctor/AddDetails';
 import { AddTiming } from './components/AddDoctor/AddTiming';
 import { NewDoctorList } from './components/NewDoctorList/NewDoctorList';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
