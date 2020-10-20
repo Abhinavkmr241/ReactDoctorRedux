@@ -72,7 +72,7 @@ export const formReducer = (
             break;
         }
         case ADD_LIST: {
-            newState.DocList.push(action.payload.data)
+            newState.DocList = [...newState.DocList, action.payload.data]
             newState.user = {
                 name: "",
                 experience: "",

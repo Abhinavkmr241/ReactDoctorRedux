@@ -3,7 +3,7 @@ import { formReducer } from './reducers';
 import logger from "redux-logger";
 import hardSet from "redux-persist/es/stateReconciler/hardSet";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
     key: 'root',

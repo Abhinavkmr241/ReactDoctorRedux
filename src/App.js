@@ -15,22 +15,22 @@ import { Provider } from "react-redux";
 function App() {
   return (
     <Provider store={store}>
-      <Router>
-        <PersistGate persistor={persistor}>
-        <div className="App">
-          <Menu />
-          <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/doctor-list" component={DoctorList} />
-            <Route path="/add-doctor" exact component={AddDoctor} />
-            <Route path="/add-doctor/step1" component={AddDetails} />
-            <Route path="/add-doctor/step2" component={AddTiming} />
-            <Route path="/newly-added-doctors" component={NewDoctorList} />
-          </Switch>
-        </div>
-        </PersistGate>
-      </Router>
-    </Provider >
+      <PersistGate persistor={persistor}>
+        <Router>
+          <div className="App">
+            <Menu />
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="/doctor-list" component={DoctorList} />
+              <Route path="/add-doctor" exact component={AddDoctor} />
+              <Route path="/add-doctor/step1" component={AddDetails} />
+              <Route path="/add-doctor/step2" component={AddTiming} />
+              <Route path="/newly-added-doctors" component={NewDoctorList} />
+            </Switch>
+          </div>
+        </Router>
+      </PersistGate>
+    </Provider>
   );
 }
 
