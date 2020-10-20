@@ -10,17 +10,15 @@ export class DoctorList extends Component {
     state = {
         doctors: [],
         totalCount: '',
-        pageNumber: 1,
         pageSize: 10
     }
 
     componentDidMount() {
         makePostRequest('https://api-dev.askvaidya.in/admin/v1/doctors', true, {
-            pageNumber: this.state.pageNumber,
-            pageSize: 10,
+            pageNumber: 1,
+            pageSize: this.state.pageSize,
             filters: {}
         }).then(res => {
-            console.log(res)
             this.setState({
                 doctors: res.doctors,
                 totalCount: res.totalCount
@@ -28,29 +26,22 @@ export class DoctorList extends Component {
         }).catch(e => console.log(e));
     }
 
-    // componentDidUpdate() {
-    //     makePostRequest('https://api-dev.askvaidya.in/admin/v1/doctors', true, {
-    //         pageNumber: this.state.pageNumber,
-    //         pageSize: 10,
-    //         filters: {}
-    //     }).then(res => {
-    //         console.log(res)
-    //         this.setState({
-    //             doctors: res.doctors,
-    //             totalCount: res.totalCount
-    //         })
-    //     }).catch(e => console.log(e));
-    // }
-
     paginate = (pageNumber) => {
-        this.setState({
-            pageNumber: pageNumber
-        });
+        makePostRequest('https://api-dev.askvaidya.in/admin/v1/doctors', true, {
+            pageNumber: pageNumber,
+            pageSize: this.state.pageSize,
+            filters: {}
+        }).then(res => {
+            this.setState({
+                doctors: res.doctors,
+                totalCount: res.totalCount
+            })
+        }).catch(e => console.log(e));
     }
 
     render() {
         return (
-            <div className="doctorListTab">
+            <div>
                 <Table>
                     <thead>
                         <tr>
@@ -66,14 +57,18 @@ export class DoctorList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.doctors.map(doc => 
-                            <ListElement doctor={doc} key={doc._id} />    
+                        {this.state.doctors.map(doc =>
+                            <ListElement doctor={doc} key={doc._id} />
                         )}
                     </tbody>
                 </Table>
-                <Pagination pageSize={this.state.pageSize} totalCount={this.state.totalCount}
-                    paginate = {this.paginate}
-                />
+                <div className="paginateDetails">
+                    <div>
+                        <Pagination pageSize={this.state.pageSize} totalCount={this.state.totalCount}
+                            paginate={this.paginate}
+                        />
+                    </div>
+                </div>
             </div>
         )
     }

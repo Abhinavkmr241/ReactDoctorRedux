@@ -14,10 +14,9 @@ export const Pagination = ({ pageSize, totalCount, paginate }) => {
             <ul className="pagination">
                 {pageNumbers.map(number => (
                     <li key={number} className="page-item">
-                        <a onClick = {() => paginate(number)} href='/' className="page-link">
+                        <a onClick = {() => paginate(number)} className="page-link">
                             {number}
                         </a>
-                        {/* <button onClick= {() => paginate(number)}>{number}</button> */}
                     </li>
                 ))}
             </ul>   

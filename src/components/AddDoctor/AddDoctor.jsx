@@ -1,10 +1,11 @@
-import React from 'react'
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 export const AddDoctor = () => {
     return (
-        <div>
-            <h1>Add Doc Page</h1>
-        </div>
+        <Redirect to={{
+            pathname: '/add-doctor/step1'
+        }} />
     )
 }
 

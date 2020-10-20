@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './AddDetails.css';
+import { Redirect } from 'react-router-dom';
 import { Col, Row, Button, Form, FormGroup, Label, Input } from 'reactstrap';
-// import { connect } from "react-redux";
-// import { addField, addError, changeDirty, updateList, addId } from '../../redux/actions/details-validate-action';
+import { connect } from "react-redux";
+import { addBasicInfo } from '../../redux/actions/form-action';
 
-export class AddDetails extends Component {
+class AddDetails extends Component {
 
     state = {
         user: {
@@ -21,7 +22,6 @@ export class AddDetails extends Component {
             specialization: "",
             superSpecialization: "",
             gender: "",
-            id: "",
             speciality: ""
         },
         isDirty: {
@@ -40,9 +40,9 @@ export class AddDetails extends Component {
             gender: false,
             speciality: false
         },
-        errors: {}
+        errors: {},
+        redirect: false
     }
-
 
     handleChange = (field, value) => {
         const { user, isDirty } = this.state;
@@ -83,20 +83,11 @@ export class AddDetails extends Component {
             let errors = this.validateForm();
             console.log(errors);
             if (!errors) {
-                console.log("Name :- " + this.state.user.name)
-                console.log("Experience :- " + this.state.user.experience)
-                console.log("Consulting fees :- " + this.state.user.fees)
-                console.log("Qualification :- " + this.state.user.qualification)
-                console.log("Practising at :- " + this.state.user.practising)
-                console.log("Languages :- " + this.state.user.language)
-                console.log("Email :- " + this.state.user.email)
-                console.log("Phone :- " + this.state.user.phone)
-                console.log("Gender :- " + this.state.user.gender)
-                console.log("Medical registration number :- " + this.state.user.medicalNo)
-                console.log("Graduation :- " + this.state.user.graduation)
-                console.log("Specialization :- " + this.state.user.specialization)
-                console.log("Super specialization :- " + this.state.user.superSpecialization)
-                console.log("Speciality :- " + this.state.user.speciality)
+                const basicForm = this.state.user;
+                this.props.addBasicInfo({ basicForm });
+                this.setState({
+                    redirect: true
+                });
             }
         });
     };
@@ -226,6 +217,9 @@ export class AddDetails extends Component {
     render() {
         return (
             <div className="basicForm">
+                {this.state.redirect ? <Redirect to={{
+                    pathname: '/add-doctor/step2'
+                }} /> : ''}
                 <div className="title">
                     <h1>Add Basic Info</h1>
                 </div>
@@ -495,10 +489,10 @@ export class AddDetails extends Component {
                                 <FormGroup>
                                     <Label for="gender">Gender</Label>
                                     {this.state.errors && (
-                                            <small style={{ color: "red" }}>
-                                                {this.state.errors.gender}
-                                            </small>
-                                        )}
+                                        <small style={{ color: "red" }}>
+                                            {this.state.errors.gender}
+                                        </small>
+                                    )}
                                     <Row>
                                         <Col md={2} style={{ marginLeft: "120px" }}>
                                             <div>
@@ -580,7 +574,7 @@ export class AddDetails extends Component {
                                 </FormGroup>
                             </Col>
                         </Row>
-                        <Button type="submit">Save</Button>
+                        <Button type="submit">Next</Button>
                     </Form>
                 </div>
             </div >
@@ -588,22 +582,16 @@ export class AddDetails extends Component {
     }
 }
 
-// const mapStateToProps = (state) => {
-//     return {
-//         formState: state
-//     };
-// };
+const mapStateToProps = (state) => {
+    return {
+        formState: state
+    };
+};
 
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         addField: (element) => dispatch(addField(element)),
-//         addError: (element) => dispatch(addError(element)),
-//         changeDirty: (element) => dispatch(changeDirty(element)),
-//         updateList: (data) => dispatch(updateList(data)),
-//         addId: (id) => dispatch(addId(id))
-//     }
-// }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addBasicInfo: (basicForm) => dispatch(addBasicInfo(basicForm))
+    }
+}
 
-export default AddDetails;
-
-// export default connect(mapStateToProps, mapDispatchToProps)(AddDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(AddDetails);

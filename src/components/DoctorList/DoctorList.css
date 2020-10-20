@@ -1,6 +1,14 @@
-.doctorListTab {
-    height: 800px;
-    width: 1300px;
-    margin: 40px auto;
-    border: 1px solid black;
+.paginateDetails {
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    background-color: transparent;
+}
+
+.paginateDetails div {
+    background-color: transparent;
+    width: 200px;
+    margin: 10px;
+    text-align: center;
+    line-height: 75px;
 }

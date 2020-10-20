@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import './AddTiming.css';
 import { Col, Row, Button, Form, FormGroup, Label } from 'reactstrap';
+import { connect } from "react-redux";
+import { Redirect } from 'react-router-dom';
+import { addtimingInfo, addToList } from '../../redux/actions/form-action';
 
-export class AddTiming extends Component {
+class AddTiming extends Component {
 
     state = {
         serviceTime: [
@@ -28,7 +31,8 @@ export class AddTiming extends Component {
             saturday: false,
             sunday: false
         },
-        errors: {}
+        errors: {},
+        redirect: false
     }
 
     handleOnSubmit = (e) => {
@@ -46,7 +50,13 @@ export class AddTiming extends Component {
             let errors = this.validateForm();
             console.log(errors);
             if (!errors) {
-                console.log(this.state.days)
+                const timingForm = this.state.days;
+                this.props.addtimingInfo({timingForm});
+                const data = this.props.formState.user;
+                this.props.addToList({data});
+                this.setState({
+                    redirect: true
+                });
             }
         });
     }
@@ -66,8 +76,7 @@ export class AddTiming extends Component {
 
     validateForm = () => {
         const { days, errors, isDirty, serviceTime } = this.state;
-        const dayList = days;
-        Object.keys(dayList).forEach((day) => {
+        Object.keys(days).forEach((day) => {
             for (let i of days[day]) {
                 for (let j of serviceTime) {
                     if (i.fromTime === j.label) {
@@ -78,138 +87,187 @@ export class AddTiming extends Component {
                 }
             }
             if (day === "monday" && isDirty.monday) {
-                const mon = dayList[day];
-                for (let i = 0; i < mon.length; i++) {
-                    if ((mon[i].fromTime === null) || (mon[i].toTime === null)) {
-                        errors.monday = "Fields should not be empty :- " + (mon[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.monday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.monday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < mon.length; j++) {
-                            if (mon[i].fromTime > mon[i].toTime) {
-                                errors.monday = "From time should be less that To time";
-                            } else if (mon[j].fromTime < mon[i].toTime) {
-                                errors.monday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.monday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.monday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.monday = false;
-                }
+                });
             } else if (day === "tuesday" && isDirty.tuesday) {
-                const tue = dayList[day];
-                for (let i = 0; i < tue.length; i++) {
-                    if ((tue[i].fromTime === null) || (tue[i].toTime === null)) {
-                        errors.tuesday = "Fields should not be empty :- " + (tue[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.tuesday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.tuesday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < tue.length; j++) {
-                            if (tue[i].fromTime > tue[i].toTime) {
-                                errors.tuesday = "From time should be less that To time";
-                            } else if (tue[j].fromTime < tue[i].toTime) {
-                                errors.tuesday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.tuesday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.tuesday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.tuesday = false;
-                }
+                });
             } else if (day === "wednesday" && isDirty.wednesday) {
-                const wed = dayList[day];
-                for (let i = 0; i < wed.length; i++) {
-                    if ((wed[i].fromTime === null) || (wed[i].toTime === null)) {
-                        errors.wednesday = "Fields should not be empty :- " + (wed[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.wednesday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.wednesday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < wed.length; j++) {
-                            if (wed[i].fromTime > wed[i].toTime) {
-                                errors.wednesday = "From time should be less that To time";
-                            } else if (wed[j].fromTime < wed[i].toTime) {
-                                errors.wednesday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.wednesday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.wednesday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.wednesday = false;
-                }
+                });
             } else if (day === "thursday" && isDirty.thursday) {
-                const thur = dayList[day];
-                for (let i = 0; i < thur.length; i++) {
-                    if ((thur[i].fromTime === null) || (thur[i].toTime === null)) {
-                        errors.thursday = "Fields should not be empty :- " + (thur[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.thursday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.thursday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < thur.length; j++) {
-                            if (thur[i].fromTime > thur[i].toTime) {
-                                errors.thursday = "From time should be less that To time";
-                            } else if (thur[j].fromTime < thur[i].toTime) {
-                                errors.thursday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.thursday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.thursday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.thursday = false;
-                }
+                });
             } else if (day === "friday" && isDirty.friday) {
-                const fri = dayList[day];
-                for (let i = 0; i < fri.length; i++) {
-                    if ((fri[i].fromTime === null) || (fri[i].toTime === null)) {
-                        errors.friday = "Fields should not be empty :- " + (fri[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.friday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.friday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < fri.length; j++) {
-                            if (fri[i].fromTime > fri[i].toTime) {
-                                errors.friday = "From time should be less that To time";
-                            } else if (fri[j].fromTime < fri[i].toTime) {
-                                errors.friday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.friday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.friday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.friday = false;
-                }
+                });
             } else if (day === "saturday" && isDirty.saturday) {
-                const sat = dayList[day];
-                for (let i = 0; i < sat.length; i++) {
-                    if ((sat[i].fromTime === null) || (sat[i].toTime === null)) {
-                        errors.saturday = "Fields should not be empty :- " + (sat[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.saturday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.saturday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < sat.length; j++) {
-                            if (sat[i].fromTime > sat[i].toTime) {
-                                errors.saturday = "From time should be less that To time";
-                            } else if (sat[j].fromTime < sat[i].toTime) {
-                                errors.saturday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.saturday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.saturday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.saturday = false;
-                }
+                });
             } else if (day === "sunday" && isDirty.sunday) {
-                const sun = dayList[day];
-                for (let i = 0; i < sun.length; i++) {
-                    if ((sun[i].fromTime === null) || (sun[i].toTime === null)) {
-                        errors.sunday = "Fields should not be empty :- " + (sun[i].fromTime ? "To time" : "From Time");
+                days[day].forEach((key, index) => {
+                    if (key.fromTime === "" || key.toTime === "") {
+                        errors.sunday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.sunday = "From time should be less than To time";
                     } else {
-                        for (let j = i + 1; j < sun.length; j++) {
-                            if (sun[i].fromTime > sun[i].toTime) {
-                                errors.sunday = "From time should be less that To time";
-                            } else if (sun[j].fromTime < sun[i].toTime) {
-                                errors.sunday = "overlap between time slots";
-                            } 
+                        if (days[day][index + 1]) {
+                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
+                                errors.sunday = 'Timing overlaps!!!';
+                            }
+                        } else {
+                            delete errors[day];
+                            isDirty.sunday = false;
+                            for (let i of days[day]) {
+                                for (let j of serviceTime) {
+                                    if (i.fromTime === j.value) {
+                                        i.fromTime = j.label;
+                                    } else if (i.toTime === j.value) {
+                                        i.toTime = j.label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                if (!errors) {
-                    delete errors[day];
-                    isDirty.sunday = false;
-                }
+                })
             }
         });
         this.setState({ errors });
@@ -223,42 +281,84 @@ export class AddTiming extends Component {
         if (day === "monday") {
             this.setState({
                 days: {
-                    monday: newItem
+                    monday: newItem,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "tuesday") {
             this.setState({
                 days: {
-                    tuesday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: newItem,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "wednesday") {
             this.setState({
                 days: {
-                    wednesday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: newItem,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "thursday") {
             this.setState({
                 days: {
-                    thursday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: newItem,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "friday") {
             this.setState({
                 days: {
-                    friday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: newItem,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "saturday") {
             this.setState({
                 days: {
-                    saturday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: newItem,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "sunday") {
             this.setState({
                 days: {
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
                     sunday: newItem
                 }
             });
@@ -273,42 +373,84 @@ export class AddTiming extends Component {
         if (day === "monday") {
             this.setState({
                 days: {
-                    monday: newItem
+                    monday: newItem,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "tuesday") {
             this.setState({
                 days: {
-                    tuesday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: newItem,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "wednesday") {
             this.setState({
                 days: {
-                    wednesday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: newItem,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "thursday") {
             this.setState({
                 days: {
-                    thursday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: newItem,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "friday") {
             this.setState({
                 days: {
-                    friday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: newItem,
+                    saturday: this.state.days.saturday,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "saturday") {
             this.setState({
                 days: {
-                    saturday: newItem
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: newItem,
+                    sunday: this.state.days.sunday
                 }
             });
         } else if (day === "sunday") {
             this.setState({
                 days: {
+                    monday: this.state.days.monday,
+                    tuesday: this.state.days.tuesday,
+                    wednesday: this.state.days.wednesday,
+                    thursday: this.state.days.thursday,
+                    friday: this.state.days.friday,
+                    saturday: this.state.days.saturday,
                     sunday: newItem
                 }
             });
@@ -323,15 +465,18 @@ export class AddTiming extends Component {
         })
         return (
             <div className="timingForm">
+                {this.state.redirect ? <Redirect to={{
+                    pathname: '/newly-added-doctors'
+                }} /> : ''}
                 <div className="title">
                     <h1>Add Work Timings</h1>
                 </div>
-                <div>
+                <div style={{ paddingLeft: "250px" }}>
                     <Form onSubmit={this.handleOnSubmit}>
                         <Row form>
                             <FormGroup>
                                 <h2>Monday</h2>
-                                <Button type="submit" onClick={(e) => this.addInput(e, "monday")}>Add</Button>
+                                <Button onClick={(e) => this.addInput(e, "monday")}>Add</Button>
                                 {this.state.days.monday.map((item, i) => {
                                     return (
                                         <Row key={i}>
@@ -339,7 +484,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "monday")} >
                                                         <option></option>
                                                         {optionList}
@@ -350,17 +494,21 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
                                                     <select style={{ width: '100%' }} name="toTime"
-                                                        value={item.toTime}
                                                         onChange={(e) => this.handleChange(e, i, "monday")} >
                                                         <option></option>
                                                         {optionList}
                                                     </select>
                                                 </FormGroup>
                                             </Col>
-                                            <Button type="submit" onClick={(e) => this.deleteInput(e, i, "monday")}>Delete</Button>
+                                            <Button onClick={(e) => this.deleteInput(e, i, "monday")}>Delete</Button>
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.monday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Row form>
@@ -374,7 +522,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "tuesday")} >
                                                         <option></option>
                                                         {optionList}
@@ -385,7 +532,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
                                                     <select style={{ width: '100%' }} name="toTime"
-                                                        value={item.toTime}
                                                         onChange={(e) => this.handleChange(e, i, "tuesday")} >
                                                         <option></option>
                                                         {optionList}
@@ -396,6 +542,11 @@ export class AddTiming extends Component {
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.tuesday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Row form>
@@ -409,7 +560,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "wednesday")} >
                                                         <option></option>
                                                         {optionList}
@@ -420,7 +570,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
                                                     <select style={{ width: '100%' }} name="toTime"
-                                                        value={item.toTime}
                                                         onChange={(e) => this.handleChange(e, i, "wednesday")}>
                                                         <option></option>
                                                         {optionList}
@@ -431,6 +580,11 @@ export class AddTiming extends Component {
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.wednesday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Row form>
@@ -444,7 +598,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "thursday")} >
                                                         <option></option>
                                                         {optionList}
@@ -454,8 +607,7 @@ export class AddTiming extends Component {
                                             <Col md={6}>
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
-                                                    <select style={{ width: '120%' }} name="toTime"
-                                                        value={item.toTime}
+                                                    <select style={{ width: '100%' }} name="toTime"
                                                         onChange={(e) => this.handleChange(e, i, "thursday")} >
                                                         <option></option>
                                                         {optionList}
@@ -466,6 +618,11 @@ export class AddTiming extends Component {
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.thursday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Row form>
@@ -479,7 +636,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "friday")} >
                                                         <option></option>
                                                         {optionList}
@@ -490,7 +646,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
                                                     <select style={{ width: '100%' }} name="toTime"
-                                                        value={item.toTime}
                                                         onChange={(e) => this.handleChange(e, i, "friday")} >
                                                         <option></option>
                                                         {optionList}
@@ -501,6 +656,11 @@ export class AddTiming extends Component {
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.friday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Row form>
@@ -514,7 +674,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "saturday")} >
                                                         <option></option>
                                                         {optionList}
@@ -525,7 +684,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
                                                     <select style={{ width: '100%' }} name="toTime"
-                                                        value={item.toTime}
                                                         onChange={(e) => this.handleChange(e, i, "saturday")} >
                                                         <option></option>
                                                         {optionList}
@@ -536,6 +694,11 @@ export class AddTiming extends Component {
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.saturday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Row form>
@@ -549,7 +712,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="fromTime">From Time</Label>
                                                     <select style={{ width: '100%' }} name="fromTime"
-                                                        value={item.fromTime}
                                                         onChange={(e) => this.handleChange(e, i, "sunday")} >
                                                         <option></option>
                                                         {optionList}
@@ -560,7 +722,6 @@ export class AddTiming extends Component {
                                                 <FormGroup>
                                                     <Label for="toTime">To Time</Label>
                                                     <select style={{ width: '100%' }} name="toTime"
-                                                        value={item.toTime}
                                                         onChange={(e) => this.handleChange(e, i, "sunday")} >
                                                         <option></option>
                                                         {optionList}
@@ -571,6 +732,11 @@ export class AddTiming extends Component {
                                         </Row>
                                     )
                                 })}
+                                {this.state.errors && (
+                                    <small style={{ color: "red" }}>
+                                        {this.state.errors.sunday}
+                                    </small>
+                                )}
                             </FormGroup>
                         </Row>
                         <Button type="submit">Save</Button>
@@ -581,4 +747,17 @@ export class AddTiming extends Component {
     }
 }
 
-export default AddTiming
+const mapStateToProps = (state) => {
+    return {
+        formState: state
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addtimingInfo: (timingForm) => dispatch(addtimingInfo(timingForm)),
+        addToList: (data) => dispatch(addToList(data))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddTiming);

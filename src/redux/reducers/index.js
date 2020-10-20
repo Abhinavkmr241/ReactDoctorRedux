@@ -1,1 +1,1 @@
-export { formValidateReducer } from './details-validate';
+export { formReducer } from './formReducer';

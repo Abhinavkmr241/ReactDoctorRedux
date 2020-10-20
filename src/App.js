@@ -4,17 +4,19 @@ import { Menu } from './components/Menu/Menu';
 import { Home } from './components/Menu/Home';
 import { DoctorList } from './components/DoctorList/DoctorList';
 import { AddDoctor } from './components/AddDoctor/AddDoctor';
-import { AddDetails } from './components/AddDoctor/AddDetails';
-import { AddTiming } from './components/AddDoctor/AddTiming';
-import { NewDoctorList } from './components/NewDoctorList/NewDoctorList';
+import AddDetails from './components/AddDoctor/AddDetails';
+import AddTiming from './components/AddDoctor/AddTiming';
+import NewDoctorList from './components/NewDoctorList/NewDoctorList';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { store } from "./redux/store";
+import { store, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react"
 import { Provider } from "react-redux";
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
+        <PersistGate persistor={persistor}>
         <div className="App">
           <Menu />
           <Switch>
@@ -26,6 +28,7 @@ function App() {
             <Route path="/newly-added-doctors" component={NewDoctorList} />
           </Switch>
         </div>
+        </PersistGate>
       </Router>
     </Provider >
   );

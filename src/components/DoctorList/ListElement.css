@@ -1,0 +1,9 @@
+.modalView {
+    height: 300px;
+    width: 500px;
+    border: 2px solid black;
+    color: whitesmoke;
+    text-align: center;
+    border-radius: 20px;
+    background-color: rgb(10, 10, 53);
+}
