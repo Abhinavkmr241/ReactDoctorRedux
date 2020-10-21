@@ -74,250 +74,145 @@ class AddTiming extends Component {
         });
     }
 
+    changeFormat = (day) => {
+        const { days, serviceTime } = this.state;
+        days[day].forEach((key) => {
+            for (let i of serviceTime) {
+                if (key.fromTime === i.value) {
+                    key.fromTime = i.label;
+                } else if (key.toTime === i.value) {
+                    key.toTime = i.label;
+                }
+            }
+        });
+        console.log(days[day]);
+    }
+
+    checkTimingOverlaps = (day) => {
+        let temp = false;
+        const { days } = this.state;
+        days[day].forEach((key, index) => {
+            if (days[day][index + 1]) {
+                if ((days[day][index].toTime) > (days[day][index + 1].fromTime)) {
+                    temp = true;
+                } 
+            }
+        });
+        return temp;
+    }
+
     validateForm = () => {
         const { days, errors, isDirty, serviceTime } = this.state;
         Object.keys(days).forEach((day) => {
-            // for (let i of days[day]) {
-            //     for (let j of serviceTime) {
-            //         if (i.fromTime === j.label) {
-            //             i.fromTime = j.value;
-            //         } else if (i.toTime === j.label) {
-            //             i.toTime = j.value;
-            //         }
-            //     }
-            // }
+            for (let i of days[day]) {
+                for (let j of serviceTime) {
+                    if (i.fromTime === j.label) {
+                        i.fromTime = j.value;
+                    } else if (i.toTime === j.label) {
+                        i.toTime = j.value;
+                    }
+                }
+            }
             if (day === "monday" && isDirty.monday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.monday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
+                    } else if (key.fromTime > key.toTime) {
+                        errors.monday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.monday = "Timing overlaps!!!";
                     } else {
-                        if ((key.fromTime) > (key.toTime)) {
-                            console.log(key.fromTime)
-                            console.log(key.toTime)
-                            errors.monday = "From time should be less than To time";
-                        } else {
-                            if (days[day][index + 1]) {
-                                if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                    errors.monday = "Timing overlaps!!!";
-                                } else {
-                                    delete errors[day];
-                                    isDirty.monday = false;
-                                }
-                            } else {
-                                delete errors[day];
-                                isDirty.monday = false;
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.monday = false;
+                        this.changeFormat(day);
                     }
-                        // else if (key.fromTime > key.toTime) {
-                        //     errors.monday = "From time should be less than To time";
-                        // } else {
-                        //     if (days[day][index + 1]) {
-                        //         if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                        //             console.log(days[day]);
-                        //             errors.monday = "Timing overlaps!!!";
-                        //             console.log(errors);
-                        //         }
-                        //     } else {
-                        //         delete errors[day];
-                        //         isDirty.monday = false;
-                        //         for (let i of days[day]) {
-                        //             for (let j of serviceTime) {
-                        //                 if (i.fromTime === j.value) {
-                        //                     i.fromTime = j.label;
-                        //                 } else if (i.toTime === j.value) {
-                        //                     i.toTime = j.label;
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        // }
-                        // if (days[day][index + 1]) {
-                        //     if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                        //         errors.monday = 'Timing overlaps!!!';
-                        //         console.log(errors);
-                        //     }
-                        // } else {
-                        //     if (key.fromTime === "" || key.toTime === "") {
-                        //         errors.monday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
-                        //     } else if (key.fromTime > key.toTime) {
-                        //         errors.monday = "From time should be less than To time";
-                        //     } else {
-                        //         if (!errors[day].length) {
-                        //             delete errors[day];
-                        //             isDirty.monday = false;
-                        //             for (let i of days[day]) {
-                        //                 for (let j of serviceTime) {
-                        //                     if (i.fromTime === j.value) {
-                        //                         i.fromTime = j.label;
-                        //                     } else if (i.toTime === j.value) {
-                        //                         i.toTime = j.label;
-                        //                     }
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        // }
-                    });
+                });
             } else if (day === "tuesday" && isDirty.tuesday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.tuesday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
                     } else if (key.fromTime > key.toTime) {
                         errors.tuesday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.tuesday = "Timing overlaps!!!";
                     } else {
-                        if (days[day][index + 1]) {
-                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                errors.tuesday = 'Timing overlaps!!!';
-                            }
-                        } else {
-                            delete errors[day];
-                            isDirty.tuesday = false;
-                            for (let i of days[day]) {
-                                for (let j of serviceTime) {
-                                    if (i.fromTime === j.value) {
-                                        i.fromTime = j.label;
-                                    } else if (i.toTime === j.value) {
-                                        i.toTime = j.label;
-                                    }
-                                }
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.tuesday = false;
+                        this.changeFormat(day);
                     }
                 });
             } else if (day === "wednesday" && isDirty.wednesday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.wednesday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
                     } else if (key.fromTime > key.toTime) {
                         errors.wednesday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.wednesday = "Timing overlaps!!!";
                     } else {
-                        if (days[day][index + 1]) {
-                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                errors.wednesday = 'Timing overlaps!!!';
-                            }
-                        } else {
-                            delete errors[day];
-                            isDirty.wednesday = false;
-                            for (let i of days[day]) {
-                                for (let j of serviceTime) {
-                                    if (i.fromTime === j.value) {
-                                        i.fromTime = j.label;
-                                    } else if (i.toTime === j.value) {
-                                        i.toTime = j.label;
-                                    }
-                                }
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.wednesday = false;
+                        this.changeFormat(day);
                     }
                 });
             } else if (day === "thursday" && isDirty.thursday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.thursday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
                     } else if (key.fromTime > key.toTime) {
                         errors.thursday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.thursday = "Timing overlaps!!!";
                     } else {
-                        if (days[day][index + 1]) {
-                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                errors.thursday = 'Timing overlaps!!!';
-                            }
-                        } else {
-                            delete errors[day];
-                            isDirty.thursday = false;
-                            for (let i of days[day]) {
-                                for (let j of serviceTime) {
-                                    if (i.fromTime === j.value) {
-                                        i.fromTime = j.label;
-                                    } else if (i.toTime === j.value) {
-                                        i.toTime = j.label;
-                                    }
-                                }
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.thursday = false;
+                        this.changeFormat(day);
                     }
                 });
             } else if (day === "friday" && isDirty.friday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.friday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
                     } else if (key.fromTime > key.toTime) {
                         errors.friday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.friday = "Timing overlaps!!!";
                     } else {
-                        if (days[day][index + 1]) {
-                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                errors.friday = 'Timing overlaps!!!';
-                            }
-                        } else {
-                            delete errors[day];
-                            isDirty.friday = false;
-                            for (let i of days[day]) {
-                                for (let j of serviceTime) {
-                                    if (i.fromTime === j.value) {
-                                        i.fromTime = j.label;
-                                    } else if (i.toTime === j.value) {
-                                        i.toTime = j.label;
-                                    }
-                                }
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.friday = false;
+                        this.changeFormat(day);
                     }
                 });
             } else if (day === "saturday" && isDirty.saturday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.saturday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
                     } else if (key.fromTime > key.toTime) {
                         errors.saturday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.saturday = "Timing overlaps!!!";
                     } else {
-                        if (days[day][index + 1]) {
-                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                errors.saturday = 'Timing overlaps!!!';
-                            }
-                        } else {
-                            delete errors[day];
-                            isDirty.saturday = false;
-                            for (let i of days[day]) {
-                                for (let j of serviceTime) {
-                                    if (i.fromTime === j.value) {
-                                        i.fromTime = j.label;
-                                    } else if (i.toTime === j.value) {
-                                        i.toTime = j.label;
-                                    }
-                                }
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.saturday = false;
+                        this.changeFormat(day);
                     }
                 });
             } else if (day === "sunday" && isDirty.sunday) {
-                days[day].forEach((key, index) => {
+                days[day].forEach((key) => {
                     if (key.fromTime === "" || key.toTime === "") {
                         errors.sunday = "Fields should not be empty :- " + (key.fromTime ? "To time" : "From Time");
                     } else if (key.fromTime > key.toTime) {
                         errors.sunday = "From time should be less than To time";
+                    } else if (this.checkTimingOverlaps(day)) {
+                        errors.sunday = "Timing overlaps!!!";
                     } else {
-                        if (days[day][index + 1]) {
-                            if (days[day][index].toTime > days[day][index + 1].fromTime) {
-                                errors.sunday = 'Timing overlaps!!!';
-                            }
-                        } else {
-                            delete errors[day];
-                            isDirty.sunday = false;
-                            for (let i of days[day]) {
-                                for (let j of serviceTime) {
-                                    if (i.fromTime === j.value) {
-                                        i.fromTime = j.label;
-                                    } else if (i.toTime === j.value) {
-                                        i.toTime = j.label;
-                                    }
-                                }
-                            }
-                        }
+                        delete errors[day];
+                        isDirty.sunday = false;
+                        this.changeFormat(day);
                     }
-                })
+                });
             }
         });
-        console.log(errors);
         this.setState({ errors });
         return Object.keys(errors).length ? errors : null;
     }
@@ -508,7 +403,7 @@ class AddTiming extends Component {
     render() {
         let optionList = this.state.serviceTime.map((data) => {
             return (
-                <option key={data.value} value={data.value}>{data.label}</option>
+                <option key={data.value} value={data.label}>{data.label}</option>
             )
         })
         return (
